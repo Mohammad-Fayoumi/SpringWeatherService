@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Bean custom processor to handle calling destroy methods on prototype scoped beans -->
+    <bean id="destroyPrototypeBeans"
+          class="com.weather.DestroyPrototypeBeansProcessor">
+    </bean>
+
+    <!-- Time zone services -->
+    <bean id="localTimeZone" class="com.weather.services.timezone.LocalTimeZone">
+    </bean>
+
+    <!-- Weather services singleton -->
+    <bean id="accuService"
+          class="com.weather.services.AccuWeather"
+          init-method="startupWeatherServiceStuff"
+          destroy-method="destroyWeatherServiceStuff">
+        <!-- set up constructor injection -->
+        <constructor-arg ref="localTimeZone"/>
+    </bean>
+
+    <!-- Weather services prototype -->
+    <bean id="natWeather"
+          class="com.weather.services.NationalWeatherService"
+          init-method="startupWeatherServiceStuff"
+          destroy-method="destroy"
+          scope="prototype">
+    </bean>
+
+</beans>
